@@ -37,6 +37,26 @@ declare global {
      */
     static CONFIG_SETTING: 'compendiumConfiguration';
 
+    /**
+     * The default index fields which should be retrieved for each Compendium document type
+     */
+    static INDEX_FIELDS: {
+      /** @defaultValue `["name", "img", "type"]` */
+      Actor: string[];
+      /** @defaultValue `["name", "img", "type"]` */
+      Item: string[];
+      /** @defaultValue `["name", "thumb"]` */
+      Scene: string[];
+      /** @defaultValue `["name", "img"]` */
+      JournalEntry: string[];
+      /** @defaultValue `["name", "img"]` */
+      Macro: string[];
+      /** @defaultValue `["name", "img"]` */
+      RollTable: string[];
+      /** @defaultValue `["name"]` */
+      Playlist: string[];
+    };
+
     /** The canonical Compendium name - comprised of the originating package and the pack name */
     get collection(): string;
 
@@ -61,8 +81,11 @@ declare global {
 
     delete: (id: string) => boolean;
 
-    /** Load the Compendium index and cache it as the keys and values of the Collection. */
-    getIndex(): Promise<this['index']>;
+    /**
+     * Load the Compendium index and cache it as the keys and values of the Collection.
+     * @param options - Options which customize how the index is created
+     */
+    getIndex(options: IndexOptions): Promise<this['index']>;
 
     /**
      * Get a single Document from this Compendium by ID.
@@ -243,6 +266,11 @@ interface ImportAllOptions {
    * @defaultValue `{}`
    */
   options?: DocumentModificationContext;
+}
+
+interface IndexOptions {
+  /** An array of fields to return as part of the index */
+  fields?: string[];
 }
 
 type DocumentClassForCompendiumMetadata<T extends CompendiumCollection.Metadata> = ConfiguredDocumentClassForName<
